@@ -226,6 +226,10 @@ for b in range(len(var_list)-1):
 
 c = sqlite3.connect(URI_database)
 cu = c.cursor()
+try:
+    c.execute('DROP TABLE Result')  #################
+except:
+    pass
 c.execute('CREATE TABLE Result(' + select_var + ')')
 c.executemany('INSERT INTO Result (' + select_var + ') values (' + v + ')',results)
 

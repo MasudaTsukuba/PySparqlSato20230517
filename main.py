@@ -277,6 +277,7 @@ def execute_query(query_URI):
     return results2  ######## 2023/5/1
 
 if __name__ == '__main__':
-    query = 'query/q1.json'
+    # query = 'query/q1.json'
+    query = 'query/q1pred.json'
     results2 = execute_query(query)
     print(len(results2))

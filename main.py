@@ -245,13 +245,7 @@ def execute_query(query_URI):
 
     results2 = cu.execute(exe_query).fetchall()
     #結果の表示, output.csvに出力される
-
-
     results2 = [list(pp) for pp in results2]
-
-
-
-
     # for i in range(len(headers)):
     #     for transURI in transURI_list:
     #         if((headers[i] == transURI[0]) & (transURI[1] != 'plain')):
@@ -263,21 +257,18 @@ def execute_query(query_URI):
     #                             results[j][i] = row[1]
     #                             break
 
-
     with open(output, mode='w') as file:
         writer = csv.writer(file)
         writer.writerow(headers)
         writer.writerows(results2)
 
-
-
-
     print('SPRARQL to SQL time: {0}'.format(sparql_to_sql_e - sparql_to_sql_s))
     print('SQL exe time: {0}'.format(q_end - q_start))
+    print(len(results2))
     return results2  ######## 2023/5/1
 
+
 if __name__ == '__main__':
-    # query = 'query/q1.json'
-    query = 'query/q1pred.json'
+    query = 'query/q1.json'
+    # query = 'query/q1pred.json'
     results2 = execute_query(query)
-    print(len(results2))

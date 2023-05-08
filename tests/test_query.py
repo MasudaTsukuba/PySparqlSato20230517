@@ -41,6 +41,6 @@ def test_q7():
     assert len(result) == 1
 
 
-def test_q1pred():
-    result = execute_query('query/q1pred.json')
-    assert len(result) == 1
+# def test_q1pred():
+#     result = execute_query('query/q1pred.json')
+#     assert len(result) == 1

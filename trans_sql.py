@@ -1,7 +1,7 @@
 import csv
 import rewriter
 
-URI_directory = '/data_set2/URI/'
+URI_directory = './data_set2/URI/'
 
 def f(sql:str, sparql, mapping, filter_list):
     #subject

@@ -43,12 +43,10 @@ def execute_query(query_URI):
             prefix = element['expression']['args']
             filter_list.append([prefix[0]['value'], prefix[0]['value'] + ' ' + element['expression']['operator'] + ' "' + prefix[1]['value'] + '"'])
 
-    #print(var_list)
-    #print(filter_list)
+    # print(var_list)
+    # print(filter_list)
 
-
-
-    #SPARQLクエリの各トリプルパターンから候補のSQLクエリを検索
+    # SPARQLクエリの各トリプルパターンから候補のSQLクエリを検索
     SQL_query = []
     transURI_list = []
     check = []
@@ -122,8 +120,6 @@ def execute_query(query_URI):
 
             SQL_query.append(insert_SQL)
 
-
-
     sparql_to_sql_e = time.time()
 
     #print(SQL_query)
@@ -156,7 +152,7 @@ def execute_query(query_URI):
 
     exe_query = exe_query.replace(';','') + ';'
 
-    #print(exe_query)
+    # print(exe_query)
 
     q_start = time.time()
     results = cur.execute(exe_query).fetchall()
@@ -183,11 +179,11 @@ def execute_query(query_URI):
 
     SQL_tquery = []
 
-    #print(transURI_list)
+    # print(transURI_list)
     r_list = []
     for s in var_list:
         r_list.append(s)
-    #print(r_list)
+    #p rint(r_list)
     for y in range(len(r_list)):
         or_query = []
         insert_SQL = ''
@@ -196,7 +192,7 @@ def execute_query(query_URI):
                 for k in U_mapping_dict:
                     if k['name'] == j[1]:
                         i0 = r_list[y] + 'trans'
-                        sql = trans_sql.g(k,r_list[y],i0)
+                        sql = trans_sql.g(k, r_list[y], i0)
 
                 or_query.append(sql)
 
@@ -205,7 +201,7 @@ def execute_query(query_URI):
                 insert_SQL = insert_SQL + or_query[x]
                 if(x != len(or_query) - 1):
                     insert_SQL = insert_SQL + ' UNION '
-            insert_SQL = insert_SQL.replace(';','') + ';'
+            insert_SQL = insert_SQL.replace(';', '') + ';'
 
         if(insert_SQL != ''):
             SQL_tquery.append(insert_SQL)
@@ -229,22 +225,26 @@ def execute_query(query_URI):
     c = sqlite3.connect(URI_database)
     cu = c.cursor()
     try:
-        c.execute('DROP TABLE Result')  #################
+        c.execute('DROP TABLE Result')  # ################
     except:
         pass
     c.execute('CREATE TABLE Result(' + select_var + ')')
-    c.executemany('INSERT INTO Result (' + select_var + ') values (' + v + ')',results)
+    # results = [('100877359h', 'Mursts Hotel', 'Germany')]  # debug, 2023/5/17
+    c.executemany('INSERT INTO Result (' + select_var + ') values (' + v + ')', results)  # insert into the Result table.
 
     exe_query = 'SELECT ' + select_var2 + ' FROM (Result) '
 
     for i in range(len(SQL_tquery)):
         exe_query = exe_query + ' NATURAL JOIN (' + SQL_tquery[i] + ')'
 
-    exe_query = exe_query.replace(';','') + ';'
+    exe_query = exe_query.replace(';', '') + ';'
     print(exe_query)
 
+    # exe_query = 'SELECT s, name, cname FROM Result'  # debug, 2023/5/17
+    # exe_query = 'SELECT ID AS s, URI_hotel AS strans FROM PREFIX_hotel WHERE s="100877359h"'  # debug, 2023/5/17
+
     results2 = cu.execute(exe_query).fetchall()
-    #結果の表示, output.csvに出力される
+    # 結果の表示, output.csvに出力される
     results2 = [list(pp) for pp in results2]
     # for i in range(len(headers)):
     #     for transURI in transURI_list:
@@ -257,10 +257,11 @@ def execute_query(query_URI):
     #                             results[j][i] = row[1]
     #                             break
 
+    sorted_results2 = sorted(results2, key=lambda x: x[0])
     with open(output, mode='w') as file:
         writer = csv.writer(file)
         writer.writerow(headers)
-        writer.writerows(results2)
+        writer.writerows(sorted_results2)
 
     print('SPRARQL to SQL time: {0}'.format(sparql_to_sql_e - sparql_to_sql_s))
     print('SQL exe time: {0}'.format(q_end - q_start))
@@ -270,5 +271,11 @@ def execute_query(query_URI):
 
 if __name__ == '__main__':
     query = 'query/q1.json'
-    # query = 'query/q1pred.json'
+    query = 'query/q2.json'
+    query = 'query/q3a.json'
+    query = 'query/q3b.json'
+    query = 'query/q4.json'
+    query = 'query/q5.json'
+    query = 'query/q6.json'
+    query = 'query/q1pred.json'
     results2 = execute_query(query)
